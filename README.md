@@ -5,15 +5,15 @@ Unterstützt sowohl nativen Ausführung auf Android als auch einen Web-Browser F
 
 ## Features
 
-- 🗺️ **Interaktive Karte:** Zoom, Pan und Verschiebungen mit Touch- und Maus-Gesten (OpenStreetMap).
-- 📍 **GPS-Standortbestimmung:** 
+- **Interaktive Karte:** Zoom, Pan und Verschiebungen mit Touch- und Maus-Gesten (OpenStreetMap).
+- **GPS-Standortbestimmung:** 
   - **Android:** Nutzung der nativen Geräte-Hardware über `@capacitor/geolocation` (inklusive automatischer Berechtigungsauswertung & Einstellungen-Link bei Ablehnung).
   - **Web:** Nahtloser Fallback auf die HTML5 Browser Geolocation API (`navigator.geolocation`).
-- 🔍 **Adresssuche (Geocoding):**
+- **Adresssuche (Geocoding):**
   - **Android:** Geocoding via `@capawesome-team/capacitor-geocoder`.
   - **Web:** Automatisierter Fallback zur OpenStreetMap Nominatim REST-API.
-- 💾 **Persistente Zustandsspeicherung:** Karte behält die letzte Zoomstufe und Mittelpunkts-Koordinaten über `@capacitor/preferences` (SharedPreferences / LocalStorage).
-- 🎨 **Modernes UI:** Glassmorphismus-Suchleiste, animierter GPS-Puls-Marker und Toast-Benachrichtigungen.
+- **Persistente Zustandsspeicherung:** Karte behält die letzte Zoomstufe und Mittelpunkts-Koordinaten über `@capacitor/preferences` (SharedPreferences / LocalStorage).
+- **Modernes UI:** Glassmorphismus-Suchleiste, animierter GPS-Puls-Marker und Toast-Benachrichtigungen.
 
 ## Voraussetzungen & Setup
 
