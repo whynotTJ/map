@@ -20,9 +20,8 @@ L.Icon.Default.mergeOptions({
   shadowUrl: markerShadow,
 });
 
-// App State (initial props for l-map to prevent declarative animation conflicts)
 const initialZoom = ref(13);
-const initialCenter = ref<[number, number]>([52.520008, 13.404954]); // Default to Berlin center
+const initialCenter = ref<[number, number]>([52.520008, 13.404954]); //Berlin als Startort
 
 const searchQuery = ref("");
 const searchMarker = ref<[number, number] | null>(null);
@@ -45,7 +44,6 @@ let nextToastId = 0;
 const showToast = (toast: Omit<Toast, "id">) => {
   const id = nextToastId++;
   toasts.value.push({ ...toast, id });
-  // Auto remove after 6 seconds unless it's a permission warning that needs action
   if (toast.type !== "permission-denied") {
     setTimeout(() => {
       removeToast(id);
@@ -63,7 +61,6 @@ const mapInstance = ref<L.Map | null>(null);
 const onMapReady = async (leafletMap: L.Map) => {
   mapInstance.value = leafletMap;
 
-  // Restore persisted position immediately upon map ready
   try {
     const { value: savedCenter } = await Preferences.get({ key: "map-center" });
     const { value: savedZoom } = await Preferences.get({ key: "map-zoom" });
@@ -79,7 +76,6 @@ const onMapReady = async (leafletMap: L.Map) => {
     console.error("Failed to restore map state in onMapReady", e);
   }
 
-  // Listen for user pan/zoom completion to persist map state cleanly without prop reactivity collisions
   leafletMap.on("moveend", async () => {
     const newCenter = leafletMap.getCenter();
     const newZoom = leafletMap.getZoom();
@@ -233,7 +229,6 @@ const searchAddress = async () => {
       }
     }
 
-    // Direct OpenStreetMap Nominatim API Fallback (Standard for Web & Fallback for native)
     if (lat === null || lng === null) {
       const response = await fetch(
         `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}&limit=1`,
