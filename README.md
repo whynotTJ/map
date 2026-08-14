@@ -1,56 +1,86 @@
-# Karten-App (Android & Web)
+# Interaktive Karten-App (Android & Web)
 
-Eine interaktive Karten-Applikation entwickelt mit Vue 3, Vite, TypeScript, Leaflet und Capacitor 8.
-Unterstützt sowohl nativen Ausführung auf Android als auch einen Web-Browser Fallback für Präsentationszwecke.
+Eine moderne, interaktive Karten-Applikation entwickelt mit **Vue 3**, **Vite**, **TypeScript**, **Leaflet** und **Capacitor 8**.
+Die Anwendung ist sowohl als native Android-App als auch als responsive Web-Applikation im Browser lauffähig.
 
-## Features
+---
 
-- **Interaktive Karte:** Zoom, Pan und Verschiebungen mit Touch- und Maus-Gesten (OpenStreetMap).
-- **GPS-Standortbestimmung:** 
-  - **Android:** Nutzung der nativen Geräte-Hardware über `@capacitor/geolocation` (inklusive automatischer Berechtigungsauswertung & Einstellungen-Link bei Ablehnung).
-  - **Web:** Nahtloser Fallback auf die HTML5 Browser Geolocation API (`navigator.geolocation`).
-- **Adresssuche (Geocoding):**
-  - **Android:** Geocoding via `@capawesome-team/capacitor-geocoder`.
-  - **Web:** Automatisierter Fallback zur OpenStreetMap Nominatim REST-API.
-- **Persistente Zustandsspeicherung:** Karte behält die letzte Zoomstufe und Mittelpunkts-Koordinaten über `@capacitor/preferences` (SharedPreferences / LocalStorage).
-- **Modernes UI:** Glassmorphismus-Suchleiste, animierter GPS-Puls-Marker und Toast-Benachrichtigungen.
+## 🚀 Features
 
-## Voraussetzungen & Setup
+- **🗺️ Interaktive Karte:** Flüssiges Verschieben (Pan) und Zoomen mit Touch- und Maus-Gesten auf Basis von OpenStreetMap (`@vue-leaflet/vue-leaflet`).
+- **📍 GPS-Standortbestimmung:** 
+  - **Android:** Native Hardware-Ortung über `@capacitor/geolocation` inklusive Berechtigungsprüfung und Direktverlinkung zu den Android-Systemeinstellungen bei Verweigerung (`@capawesome/capacitor-settings-launcher`).
+  - **Web:** Automatischer Fallback auf die HTML5 Geolocation API (`navigator.geolocation`).
+- **🔍 Lokale Adresssuche (Forward Geocoding):**
+  - **Android:** Rein gerätelokales Geocoding über die native Android-Schnittstelle (`android.location.Geocoder`) mithilfe von `@capgo/capacitor-nativegeocoder` – ohne externe API-Keys oder Kontenzwang.
+  - **Web:** Fallback zur OpenStreetMap Nominatim REST-API.
+- **🔴🔵 Visuell getrennte Kreismarker:** Verwendung von performanten, SVG-basierten `<l-circle-marker>`-Komponenten:
+  - **Roter Marker:** Gefundene Adresse aus der Suchleiste.
+  - **Blauer Marker:** Eigener GPS-Standort.
+  - Beide Marker können zeitgleich auf der Karte dargestellt werden.
+- **💾 Persistente Zustandsspeicherung:** Speichert den aktuellen Mittelpunkt und die Zoomstufe über `@capacitor/preferences` (Android `SharedPreferences` / Web `localStorage`), sodass der vorherige Zustand beim Neustart exakt wiederhergestellt wird.
+- **⏳ Ladeindikatoren & Feedback:** Modernes Glassmorphismus-Lade-Overlay bei asynchronen Operationen sowie Toasts bei Erfolgs- und Fehlermeldungen.
 
-### 1. Capawesome Plugin Lizenzschlüssel (`.npmrc`)
+---
 
-Das Projekt nutzt das private Plugin `@capawesome-team/capacitor-geocoder`. Da der Lizenzschlüssel aus Sicherheitsgründen nicht in Git publiziert wird (`.npmrc` ist durch die `.gitignore` komplett gesperrt!), muss im Hauptverzeichnis des Projekts vor dem Installieren manuell eine Datei namens `.npmrc` angelegt werden:
+## 🛠️ Voraussetzungen & Installation
 
-```ini
-@capawesome-team:registry=https://npm.pkg.github.com
-//npm.pkg.github.com/:_authToken=DEIN_GEHEIMER_LIZENZSCHLUESSEL_HIER
-```
-*(Hinweis: Ersetze `DEIN_GEHEIMER_LIZENZSCHLUESSEL_HIER` durch den entsprechenden Capawesome Token).*
-
-### 2. Abhängigkeiten installieren
+### 1. Repository klonen & Abhängigkeiten installieren
 
 ```bash
+git clone https://github.com/whynotTJ/map.git
+cd map
 npm install
 ```
 
-### 3. Web-Anwendung (Lokaler Server) starten
+---
+
+## 💻 Entwicklung & Ausführung
+
+### Web-Anwendung (Lokaler Dev-Server)
+
+Um die Web-Applikation im Browser zu testen:
 
 ```bash
 npm run dev
 ```
-Die Webanwendung läuft anschließend lokal unter [http://localhost:5173/](http://localhost:5173/).
+Die Anwendung ist anschließend unter **[http://localhost:5173/](http://localhost:5173/)** erreichbar.
 
-### 4. Nativ für Android kompilieren & ausführen
+---
 
-```bash
-npm run build
-npx cap sync android
-```
+### Android (Nativ)
 
-Danach kann die App in Android Studio geöffnet oder im Emulator gebaut werden:
-```bash
-npx cap open android
-# oder alternativ direkt über Gradle im Terminal:
-cd android
-./gradlew assembleDebug
-```
+1. **Web-Assets bauen & mit Android synchronisieren:**
+   ```bash
+   npm run build
+   npx cap sync android
+   ```
+
+2. **In Android Studio öffnen:**
+   ```bash
+   npx cap open android
+   ```
+
+3. **Alternativ direkt über das Terminal kompilieren:**
+   ```bash
+   cd android
+   ./gradlew assembleDebug
+   ```
+   *(Unter Windows PowerShell: `.\gradlew.bat assembleDebug`)*
+
+Die generierte APK befindet sich anschließend unter:  
+`android/app/build/outputs/apk/debug/app-debug.apk`
+
+---
+
+## 🏗️ Verwendete Technologien & Plugins
+
+- **Frontend:** [Vue 3](https://vuejs.org/) (Composition API), [TypeScript](https://www.typescriptlang.org/), [Vite](https://vitejs.dev/)
+- **Karten-Framework:** [Leaflet](https://leafletjs.com/), [@vue-leaflet/vue-leaflet](https://github.com/vue-leaflet/vue-leaflet), OpenStreetMap Tiles
+- **Mobile Bridge:** [Capacitor 8](https://capacitorjs.com/)
+- **Plugins:**
+  - `@capacitor/geolocation` – GPS-Standort
+  - `@capacitor/preferences` – Zustandspersistierung
+  - `@capgo/capacitor-nativegeocoder` – Lokales Android Geocoding
+  - `@capawesome/capacitor-settings-launcher` – App-Settings Intent
+
