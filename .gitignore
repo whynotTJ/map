@@ -23,6 +23,3 @@ dist-ssr
 *.sln
 *.sw?
 
-# Capawesome registry token config
-.npmrc
-

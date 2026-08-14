@@ -112,7 +112,6 @@ const requestLocationPermission = async () => {
       if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(
           () => {
-            // Berechtigung erteilt – nichts weiter tun, Nutzer klickt GPS-Button bei Bedarf
           },
           (err) => {
             if (err.code === 1) {
