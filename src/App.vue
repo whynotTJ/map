@@ -61,6 +61,11 @@ const mapInstance = ref<L.Map | null>(null);
 const onMapReady = async (leafletMap: L.Map) => {
   mapInstance.value = leafletMap;
 
+  // Force Leaflet to recalculate container bounds and trigger tile loading
+  setTimeout(() => {
+    leafletMap.invalidateSize();
+  }, 200);
+
   try {
     const { value: savedCenter } = await Preferences.get({ key: "map-center" });
     const { value: savedZoom } = await Preferences.get({ key: "map-zoom" });
@@ -93,6 +98,9 @@ const onMapReady = async (leafletMap: L.Map) => {
       console.error("Failed to persist map state on moveend", e);
     }
   });
+
+  // Direkt beim App-Start Standortberechtigung abfragen (plattformabhängig)
+  await requestLocationPermission();
 };
 
 const updateMapPosition = (lat: number, lng: number, targetZoom?: number) => {
@@ -101,6 +109,47 @@ const updateMapPosition = (lat: number, lng: number, targetZoom?: number) => {
 
   if (targetMap) {
     targetMap.setView([lat, lng], newZoom, { animate: true });
+  }
+};
+
+// Plattformabhängige Standortberechtigung beim ersten App-Start abfragen
+const requestLocationPermission = async () => {
+  try {
+    if (Capacitor.getPlatform() === "web") {
+      // Im Web: Browser-eigenen Standortdialog auslösen
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+          () => {
+            // Berechtigung erteilt – nichts weiter tun, Nutzer klickt GPS-Button bei Bedarf
+          },
+          (err) => {
+            if (err.code === 1) {
+              showToast({
+                title: "Standortberechtigung benötigt",
+                message: "Bitte erlauben Sie den Standortzugriff in Ihrem Browser für die volle Funktionalität.",
+                type: "permission-denied",
+              });
+            }
+          },
+          { timeout: 5000 }
+        );
+      }
+    } else {
+      // Android: Native Berechtigungsabfrage über Capacitor Geolocation
+      let permStatus = await Geolocation.checkPermissions();
+      if (permStatus.location !== "granted") {
+        permStatus = await Geolocation.requestPermissions();
+        if (permStatus.location !== "granted") {
+          showToast({
+            title: "Standortberechtigung benötigt",
+            message: "Bitte erlauben Sie den Standortzugriff für GPS-Ortung und Kartennavigation.",
+            type: "permission-denied",
+          });
+        }
+      }
+    }
+  } catch (error) {
+    console.error("Permission request error:", error);
   }
 };
 
@@ -295,7 +344,7 @@ const openAppSettings = async () => {
 };
 
 const mapOptions = {
-  zoomControl: true,
+  zoomControl: false,
   dragging: true,
   touchZoom: true,
   doubleClickZoom: true,
@@ -320,9 +369,10 @@ const mapOptions = {
         @ready="onMapReady"
       >
         <l-tile-layer
-          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+          url="https://tile.openstreetmap.org/{z}/{x}/{y}.png"
           layer-type="base"
           name="OpenStreetMap"
+          :max-zoom="19"
         ></l-tile-layer>
 
         <!-- Search Marker -->
@@ -335,7 +385,6 @@ const mapOptions = {
             :icon-anchor="[16, 16]"
             class-name="user-location-marker"
           >
-            <div class="user-location-pulse"></div>
             <div class="user-location-dot"></div>
           </l-icon>
         </l-marker>
