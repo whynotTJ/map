@@ -8,8 +8,8 @@ project(':capacitor-geolocation').projectDir = new File('../node_modules/@capaci
 include ':capacitor-preferences'
 project(':capacitor-preferences').projectDir = new File('../node_modules/@capacitor/preferences/android')
 
-include ':capawesome-team-capacitor-geocoder'
-project(':capawesome-team-capacitor-geocoder').projectDir = new File('../node_modules/@capawesome-team/capacitor-geocoder/android')
-
 include ':capawesome-capacitor-settings-launcher'
 project(':capawesome-capacitor-settings-launcher').projectDir = new File('../node_modules/@capawesome/capacitor-settings-launcher/android')
+
+include ':capgo-capacitor-nativegeocoder'
+project(':capgo-capacitor-nativegeocoder').projectDir = new File('../node_modules/@capgo/capacitor-nativegeocoder/android')

@@ -1,24 +1,16 @@
 <script setup lang="ts">
 import { ref } from "vue";
-import { LMap, LTileLayer, LMarker, LIcon } from "@vue-leaflet/vue-leaflet";
+import { LMap, LTileLayer, LCircleMarker } from "@vue-leaflet/vue-leaflet";
 import "leaflet/dist/leaflet.css";
 import L from "leaflet";
 
 import { Capacitor } from "@capacitor/core";
 import { Geolocation } from "@capacitor/geolocation";
 import { Preferences } from "@capacitor/preferences";
-import { Geocoder } from "@capawesome-team/capacitor-geocoder";
+import { NativeGeocoder } from "@capgo/capacitor-nativegeocoder";
 import { SettingsLauncher } from "@capawesome/capacitor-settings-launcher";
 
-import markerIcon from "leaflet/dist/images/marker-icon.png";
-import markerIconRetina from "leaflet/dist/images/marker-icon-2x.png";
-import markerShadow from "leaflet/dist/images/marker-shadow.png";
 
-L.Icon.Default.mergeOptions({
-  iconRetinaUrl: markerIconRetina,
-  iconUrl: markerIcon,
-  shadowUrl: markerShadow,
-});
 
 const initialZoom = ref(13);
 const initialCenter = ref<[number, number]>([52.520008, 13.404954]); //Berlin als Startort
@@ -266,12 +258,12 @@ const searchAddress = async () => {
 
     if (Capacitor.getPlatform() !== "web") {
       try {
-        const result = await Geocoder.geocode({
-          address: query,
+        const result = await NativeGeocoder.forwardGeocode({
+          addressString: query,
         });
-        if (result && typeof result.latitude === "number" && typeof result.longitude === "number") {
-          lat = result.latitude;
-          lng = result.longitude;
+        if (result && result.addresses && result.addresses.length > 0) {
+          lat = Number(result.addresses[0].latitude);
+          lng = Number(result.addresses[0].longitude);
         }
       } catch (pluginError) {
         // Silently continue to Nominatim fallback if native geocoding service is offline/unavailable
@@ -376,18 +368,24 @@ const mapOptions = {
         ></l-tile-layer>
 
         <!-- Search Marker -->
-        <l-marker v-if="searchMarker" :lat-lng="searchMarker"></l-marker>
+        <l-circle-marker
+          v-if="searchMarker"
+          :lat-lng="searchMarker"
+          :radius="8"
+          color="#ef4444"
+          fill-color="#ef4444"
+          :fill-opacity="1"
+        ></l-circle-marker>
 
         <!-- User Current Location Marker  -->
-        <l-marker v-if="userLocation" :lat-lng="userLocation">
-          <l-icon
-            :icon-size="[32, 32]"
-            :icon-anchor="[16, 16]"
-            class-name="user-location-marker"
-          >
-            <div class="user-location-dot"></div>
-          </l-icon>
-        </l-marker>
+        <l-circle-marker
+          v-if="userLocation"
+          :lat-lng="userLocation"
+          :radius="8"
+          color="#3b82f6"
+          fill-color="#3b82f6"
+          :fill-opacity="1"
+        ></l-circle-marker>
       </l-map>
     </div>
 
