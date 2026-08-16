@@ -22,7 +22,6 @@ allprojects {
         google()
         mavenCentral()
     }
-    buildDir = "${rootProject.buildDir}/${project.name}"
 }
 
 task clean(type: Delete) {
