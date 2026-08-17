@@ -127,4 +127,14 @@ Die Anwendung ist standardmäßig unter `http://localhost:5173/` erreichbar.
   - `@capgo/capacitor-nativegeocoder`
   - `@capawesome/capacitor-settings-launcher`
 
+---
+
+## KI-Verzeichnis
+
+Im Rahmen des Projekts wurden generative KI-Tools für folgende Aufgaben unterstützend eingesetzt:
+
+- **Präsentationserstellung:** Der Erstentwurf für die Struktur und Inhalte der Präsentation (PPTX) wurde mithilfe von KI erstellt und anschließend manuell überarbeitet.
+- **Code-Migration (Geocoding):** Die Umstellung und Anpassung des Geocoding-Codes vom ursprünglichen Plugin auf `@capgo/capacitor-nativegeocoder` (Methodenaufrufe, Schnittstellen-Anpassung und Fehlerbehandlung) wurde mit KI-Unterstützung durchgeführt.
+
+
 
